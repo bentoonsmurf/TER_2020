@@ -30,6 +30,7 @@ typedef struct element{
 	struct element* precedent;
 	int x;
 	int y;
+	int val;
 	
 }element;
 
@@ -62,7 +63,7 @@ void init_signature(signature s){
 	//s.s=
 }
 
-void init_pile(pile p){
+void init_pile(pile p){// marche probblement pas 
 	p.sommet=NULL;
 	p.fond=NULL;
 }
@@ -99,12 +100,38 @@ void remplir_la_pile(int sommet,pile p){
 		element e;
 		e.x=sommet;
 		e.y=arcs[j];
+		e.val=potentielle_isomorphe[e.x][e.y]
 		e.precedent=NULL;
 		empiler(p,e);
 	}
 	free(arcs);
 }
 void ecrire_signature(signature s,element e){
+	///(depart,val,arrive)// min 7 char max 10 ?
+	/// si c'est un graph complet 30 x30 x10/2 =4500 char
+	char ajout[10];
+	int i=0;
+	ajout[i]='(';i++;
+	sprintf(ajout[i], "%d", e.x);
+	if (e.x>10){
+		i++;i++;
+	}else{
+		i++;
+	}
+	sprintf(ajout[i], "%d", e.val);
+	if (e.val>10){
+		i++;i++;
+	}else{
+		i++;
+	}
+	sprintf(ajout[i], "%d", e.y);
+	if (e.y>10){
+		i++;i++;
+	}else{
+		i++;
+	}
+	ajout[i]=')';
+	
 	// not implemented yet
 }
 
@@ -129,9 +156,6 @@ void signer(int ** graph,signature s,int depart){
 	}
 	// if( i != N) ---> graph non connexe
 	//not implemented yet
-	
-	
-	
 	
 }
 
