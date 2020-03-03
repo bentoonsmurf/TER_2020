@@ -50,9 +50,9 @@ int main(){
 signer(etalon,signature_etalon);
 signer(potentielle_isomorphe,signature_isomorph);
 
-comparer(signature_etalon,signature_isomorph);
-
 */
+
+comparer(signature_etalon,signature_isomorph);
 
 
 printf("\n %d\n",1113*4 + 1154 + 1197*2 +1242*2+7213);// ca compile c'est deja ca
