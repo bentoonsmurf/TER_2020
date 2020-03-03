@@ -40,6 +40,12 @@ struct pile{
 };
 typedef struct pile pile;
 
+typedef struct signature{
+	int i;
+	char s[signature_taille];
+	
+}signature;
+
 /// pour l'exploration de graph j'utilise la matrice de base
 /// pour ecrire la signature j'utilise la forme modifié 
 /// le nom des sommets change juste pour l'ecriture de la signature
@@ -51,6 +57,10 @@ int potentielle_isomorphe[N+1][N+1];
 char signature_etalon[signature_taille];
 char signature_isomorph[signature_taille];
 
+void init_signature(signature s){
+	s.i=0;
+	//s.s=
+}
 
 void init_pile(pile p){
 	p.sommet=NULL;
@@ -92,23 +102,34 @@ void remplir_la_pile(int sommet,pile p){
 		e.precedent=NULL;
 		empiler(p,e);
 	}
-	
-	
 	free(arcs);
 }
+void ecrire_signature(signature s,element e){
+	// not implemented yet
+}
 
-void signer(int ** graph,char * signature,int depart){
-	pile p;
-	init_pile(p);
-	remplir_la_pile(depart,p);// pile remplis par des arcs partant du point de depart
+void signer(int ** graph,signature s,int depart){
+	pile p;      init_pile(p);
+	element e;
+	//init_signature(s);
+	int i=1;
+	e.y =depart;
 	
+		/// ce sont des arcs
 	while(p.sommet != NULL){
 		
+		e =depiler(p);// e.x = depart , e.y= arrive
+		if (tab[0][e.y] == 0 ){// ---> sommet pas encore visité
+			remplir_la_pile(e.y ,p);// remplis la pile avec les arcs partant du point de depart
+			tab[0][e.y]=i;
+			i++;
+		}
+
+		ecrire_signature(s,e);
 	}
-	
+	// if( i != N) ---> graph non connexe
 	//not implemented yet
 	
-	//graph[][]    signature[]
 	
 	
 	
@@ -116,3 +137,7 @@ void signer(int ** graph,char * signature,int depart){
 
 
 
+int main(){
+	
+	return 0;
+}
