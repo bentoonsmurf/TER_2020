@@ -33,8 +33,9 @@ int comparer(char * signature1, char* signature2 ){
 		for(int i=0;i<signature_taille;i++){
 			if (signature1[i] != signature2[i]) return 0;
 		
-		return 1;
-}
+		
+		}
+return 1;
 }
 
 
@@ -57,7 +58,7 @@ comparer(signature_etalon,signature_isomorph);
 
 printf("\n %d\n",1113*4 + 1154 + 1197*2 +1242*2+7213);// ca compile c'est deja ca
 
-
+ //printf("10 shift 3  = %d\n", 10<<3); 
 
 
 
@@ -68,6 +69,3 @@ return 0;
 
 
 
-
-
-²	

@@ -162,9 +162,6 @@ void signer(int ** graph, signature s,int depart){
 		
 	}
 	
-	//not implemented yet
-	
-	//graph[][]    signature[]
 	
 	
 	
