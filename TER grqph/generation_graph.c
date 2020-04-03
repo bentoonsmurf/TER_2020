@@ -23,7 +23,19 @@ void init(){
   srandom(getpid()+ time(NULL));
 
 }
+
+void afficher(){
+	printf("\n");
+		for (int i=N;i>=0;i--){
+	for(int j=0;j<N+1;j++){
+		printf("%d|",graph_vide[i][j]);
+		}printf("\n");
+}
+}
+/// renvoie un nombre entre [1 : N]
 int alea(int n){
+	if (n==0)return 0;// en theorie ca sert a rien mais on est jamais trop prudent
+	if (n==1)return 1;
 	return (int)(random()% (n-1) +1);// return un sommet 
 
 }
@@ -102,39 +114,39 @@ void generer_cycle_simple(){
 	
 }
 
+
+
 void generer_arbre(){
-	
+	// attention [d][a] != [a][d] c'est parfaitement normal
+	// ex "d" est de degre 5 , [d][a] =3  est le 3 arc a traiter de "d"
+	// mais "a" est de degre 1 [a][d] =1 est le premier arc a traiter de "a"
 	
 	vider_graph_vide();
 	
-	pool p,depart;
+	pool depart,arrive;
 	for(int i=0; i<N; i++){/// on met chaque sommet une fois dans la pool
-		p.p[i]=i+1;
+		arrive.p[i]=i+1;
 		depart.p[i]=0;
 	}
-	p.size=N;
+	arrive.size=N;
 	depart.size=0;
-  int test[N+2];
-	int d,a;
-	a = alea(p.size);// 0 existe pas ici 
-
-	p.p[a-1]= p.p[p.size-1];	p.size--; /// on sort le premier sommet de la pool arrive
 	
-	depart.p[depart.size]= p.p[a-1];	depart.size++; /// on l'ajoute dans la pool des depart
-	test[depart.size]=p.p[a-1];
+	int d,a;
+	a = alea(arrive.size);// 0 existe pas ici 
+
+	
+	depart.p[0]= a;	depart.size= 1; /// on ajoute le premier element dans la pool des depart
+	
 	int r;
 /// etape 2 vider la pool
 
-	while(p.size > 1){ /// inscrit 2 arc dans la matrice
-		
-		r=alea(depart.size+1)-2 ;
-		d=depart.p[ r];
-		test[depart.size]=d;
-		
-		d=a;
+	while(arrive.size > 1){ /// inscrit 2 arc dans la matrice
 
-		r=alea(p.size)-1 ;
-		a=p.p[ r]; 
+		r=alea(depart.size)-1 ; 
+		d=depart.p[ r];
+
+		r=alea(arrive.size)-1 ;
+		a=arrive.p[ r]; 
 
 		graph_vide[d][0]++;/// d comme depart
 		graph_vide[0][d]++;
@@ -142,20 +154,16 @@ void generer_arbre(){
 		graph_vide[0][a]++;
 		graph_vide[d][a] =graph_vide[d][0];
 		graph_vide[a][d] =graph_vide[a][0];
-
-
-
+			
 		/// je met dans les depart potentiel le sommet que je vire des arrivé 
+		/// ce qui a pour consequance de favoriser une structure en etoile
 		depart.p[depart.size-1]= a;
 		depart.size++;
 		// je met le dernier elemnt de la pool a la place de celui qui je vien d'utiliser
 		// et je reduit la taille de la pool
-		p.p[r]= p.p[p.size-1];
-		p.size--;
+		arrive.p[r]= arrive.p[arrive.size-1];
+		arrive.size--;
 		
-
-		/// p.size = n ----> il y a exactement n sommet dans la pool 
-				///  le dernier est donc a la place [N-1]
 
 		
 	}
@@ -164,7 +172,7 @@ void generer_arbre(){
 		//d=depart.p[ r];
 		
 		d=a;
-		a=p.p[0]; 
+		a=arrive.p[0]; 
 		graph_vide[d][0]++;
 		graph_vide[0][d]++;
 		graph_vide[a][0]++;
@@ -172,24 +180,10 @@ void generer_arbre(){
 		graph_vide[d][a] =graph_vide[d][0];
 		graph_vide[a][d] =graph_vide[a][0];
 
-	printf("\n\ndepart.p");
-		for (int i=0;i<N;i++){
-		if(i%10==0){printf("\n");}
-		printf("%d|",depart.p[i]);
-		
-		}printf("\n");
-		
-		printf("\n\ntest.p");
-		for (int i=0;i<N;i++){
-		if(i%10==0){printf("\n");}
-		printf("%d|",test[i]);
-		
-		}printf("\n");
-		/*
-		*/
-		
 	
 }
+
+
 
 void generer_graph(int mode){
 	///mode 1 =graph sans contrainte
@@ -201,9 +195,11 @@ void generer_graph(int mode){
 
 
 	
-	generer_cycle_simple();///un cycle pour le moment
+	
 	
 	if (mode == 1){
+		generer_cycle_simple();///un cycle pour le moment
+		
 		int nb_arc_a_ajouter;
 		int d,a;
 		/// j'ajoute des arcs j'usque a tomber sur 1 qui existe deja
@@ -247,14 +243,7 @@ graph_vide[1][0]=-2;
 graph_vide[2][0]=-3;
 }
 
-void afficher(){
-	printf("\n");
-		for (int i=N;i>=0;i--){
-	for(int j=0;j<N+1;j++){
-		printf("%d|",graph_vide[i][j]);
-		}printf("\n");
-}
-}
+
 
 int main(){
  init();
@@ -268,6 +257,7 @@ generer_arbre(); // pas ok
 
 
 afficher();
+
 return 0;
 
 

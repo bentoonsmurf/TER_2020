@@ -1,0 +1,31 @@
+tout mes graph on en commun leur connexite
+
+je grenere donc un graph connexe 
+
+pour ce faire je crée des structures simples 
+
+une chaine :
+	je met tout les sommet dans un sac
+	j'en prend un que je relie avec le precedent
+	je le retire du sac 
+	
+	ansi de suite j'usqu'a epuisement du sac
+	
+	
+	
+un arbre
+	je creer un sac_1 vide
+	je met tout les sommet dans un autre sac_2
+	j'en prend un sommet A de sac_2 que je relie avec un sommet D du sac_1
+	je retire A du sac_2 
+	je met un sommet D de plus dans le sac_1 
+	
+	ansi de suite j'usqu'a epuisement du sac_2
+	
+
+un 3-regulier 
+Une condition nécessaire et suffisante pour l'existence d'un graphe k-régulier à n sommets
+ est que nk soit pair et que n >= k+1
+
+	je vais partir d'une base : un cycle
+	er ajouter des arretes pour compléter le graph 
