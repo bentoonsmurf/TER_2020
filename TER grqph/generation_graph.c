@@ -183,7 +183,76 @@ void generer_arbre(){
 	
 }
 
+void generer_3_connexe(){
+	if ((N*3) %2 == 0){
+	 generer_cycle_simple();
+	
+	
+	
+	
+	pool p;
+	for(int i=0; i<N; i++){/// on met chaque sommet une fois dans la pool
+		p.p[i]=i+1;
+	}
+	p.size=N;
+	
+	int d,a;
+	int r;
+/// etape 2 vider la pool
 
+	while(p.size > 1){ /// inscrit 2 arc dans la matrice
+		r=alea(p.size)-1 ;
+		d=p.p[ r];
+		
+		p.p[r]= p.p[p.size-1];
+		p.size--;
+		
+		
+		r=alea(p.size)-1 ;//alea ne renvoie pas 0
+		a=p.p[ r]; // un element dans la pool donc pas 0
+		p.p[r]= p.p[p.size-1];
+		p.size--;
+
+		graph_vide[d][0]++;/// d comme depart
+		graph_vide[0][d]++;
+		graph_vide[a][0]++;
+		graph_vide[0][a]++;
+		graph_vide[d][a] =graph_vide[d][0];
+		graph_vide[a][d] =graph_vide[a][0];
+
+
+		
+	}
+		
+	
+	}
+}
+
+void modifier_un_tout_petit_peut_le_graph(){
+	/// rappel : graph_vide[r][0] = degre de R 
+	int r=0;
+	while(graph_vide[r][0]<= 1	){
+		r=alea(N) ;
+	}
+	printf("\n %d\n",r);
+	/// j'ai r un sommet de degré 2 ou plus
+	/// je vais swap deux valeures d'arc , c'est tout
+	int a=alea(N) ;
+	int b=alea(N) ;
+	
+	while(graph_vide[r][a] == 0	){
+		 a=alea(N) ;
+		printf("\n a= %d\n",a);
+	}
+	while(graph_vide[r][b] == 0	|| b==a){
+		 b=alea(N) ;
+	}
+	int tmp = graph_vide[r][a];
+	
+	graph_vide[r][a] = graph_vide[r][b];
+	graph_vide[r][b] = tmp;
+	//graph_vide[r][0] = 0; // pour trouver la ligne 
+}
 
 void generer_graph(int mode){
 	///mode 1 =graph sans contrainte
@@ -253,11 +322,13 @@ int main(){
 
 
 //generer_graph(1); // ok
-generer_arbre(); // pas ok 
-
+//generer_arbre(); // pas ok 
+generer_3_connexe();
 
 afficher();
 
+modifier_un_tout_petit_peut_le_graph();
+afficher();
 return 0;
 
 

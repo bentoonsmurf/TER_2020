@@ -27,5 +27,17 @@ un 3-regulier
 Une condition nécessaire et suffisante pour l'existence d'un graphe k-régulier à n sommets
  est que nk soit pair et que n >= k+1
 
-	je vais partir d'une base : un cycle
-	er ajouter des arretes pour compléter le graph 
+
+	je part d'une base : un cycle
+	et j'ajoute des arretes pour compléter le graph 
+	
+	ici k = 3 donc N doit etre pair 
+	donc je peut relier des paires de sommets j'usqu'a relier tout les sommets du graph
+	
+	
+	
+	
+	
+	
+	
+	
