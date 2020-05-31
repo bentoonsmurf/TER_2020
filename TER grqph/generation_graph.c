@@ -47,6 +47,19 @@ void vider_graph_vide(){
 }
 }
 
+					//si il manque un arc par raport au degré d'un sommet ---> return le sommet
+int missing_no(){ 	//si le graph est conforme return, 0
+	int objectif, somme;
+	for (int i=1;i<N+1;i++){
+		objectif=( graph_vide[i][0]*  (graph_vide[i][0] +1) )/2;
+		somme=0;
+		for(int j=1;j<N+1;j++){
+			if(graph_vide[i][j]!=0) somme=somme+graph_vide[i][j];
+			}
+		if(somme != objectif ) return i;
+}
+return 0;	
+}
 /// pour generer un arbre et pas une chaine il faut une 2 em pool
 /// qui contiendra les sommets de depart
 void generer_cycle_simple(){
@@ -132,13 +145,15 @@ void generer_arbre(){
 	depart.size=0;
 	
 	int d,a;
-	a = alea(arrive.size);// 0 existe pas ici 
+	a = alea(arrive.size);// 0 n'existe pas ici 
 
 	
 	depart.p[0]= a;	depart.size= 1; /// on ajoute le premier element dans la pool des depart
 	
 	int r;
 /// etape 2 vider la pool
+
+//	printf("point de depart %d\n",a);
 
 	while(arrive.size > 1){ /// inscrit 2 arc dans la matrice
 
@@ -148,7 +163,8 @@ void generer_arbre(){
 		r=alea(arrive.size)-1 ;
 		a=arrive.p[ r]; 
 
-		graph_vide[d][0]++;/// d comme depart
+
+		graph_vide[d][0]++;/// j'augmente le degre du sommet
 		graph_vide[0][d]++;
 		graph_vide[a][0]++;
 		graph_vide[0][a]++;
@@ -168,10 +184,8 @@ void generer_arbre(){
 		
 	}
 		/// le dernier sommet etait oublié
-		//r=alea(depart.size)-1 ;
-		//d=depart.p[ r];
 		
-		d=a;
+		d=a; /// a etant le dernier sommet de la boucle
 		a=arrive.p[0]; 
 		graph_vide[d][0]++;
 		graph_vide[0][d]++;
@@ -179,15 +193,15 @@ void generer_arbre(){
 		graph_vide[0][a]++;
 		graph_vide[d][a] =graph_vide[d][0];
 		graph_vide[a][d] =graph_vide[a][0];
-
-	
+		
+	if(missing_no() !=0){
+		generer_arbre();
+	}/// statisiquement pas rare 
 }
 
 void generer_3_connexe(){
 	if ((N*3) %2 == 0){
-	 generer_cycle_simple();
-	
-	
+	 generer_cycle_simple();// erreur missing_no impossible
 	
 	
 	pool p;
@@ -198,43 +212,77 @@ void generer_3_connexe(){
 	
 	int d,a;
 	int r;
+	int anti_boucle_infini = 25;
 /// etape 2 vider la pool
 
 	while(p.size > 1){ /// inscrit 2 arc dans la matrice
 		r=alea(p.size)-1 ;
 		d=p.p[ r];
-		
 		p.p[r]= p.p[p.size-1];
 		p.size--;
-		
+			
+
+
 		
 		r=alea(p.size)-1 ;//alea ne renvoie pas 0
 		a=p.p[ r]; // un element dans la pool donc pas 0
 		p.p[r]= p.p[p.size-1];
 		p.size--;
-
-		graph_vide[d][0]++;/// d comme depart
-		graph_vide[0][d]++;
-		graph_vide[a][0]++;
-		graph_vide[0][a]++;
-		graph_vide[d][a] =graph_vide[d][0];
-		graph_vide[a][d] =graph_vide[a][0];
-
+			
+			
+		if (graph_vide[d][a] ==0){
+			
+			graph_vide[d][0]++;/// d comme depart
+			graph_vide[0][d]++;
+			graph_vide[a][0]++;
+			graph_vide[0][a]++;
+			graph_vide[d][a] =graph_vide[d][0];
+			graph_vide[a][d] =graph_vide[a][0];
+			printf("arc [%d;%d] = %d\n",d,a,graph_vide[d][a]);
+		
+		}
+		else{
+			if(anti_boucle_infini> 0){
+				printf("ALREADY EXIST arc [%d;%d] = %d\n",d,a,graph_vide[d][a]);
+			
+				p.size++;
+				p.p[p.size-1]=d;
+				p.size++;
+				p.p[p.size-1]=a;
+				anti_boucle_infini--;
+			}
+			if(anti_boucle_infini <= 0){// making sure missing_no catches it
+						
+				graph_vide[d][0]++;
+				graph_vide[0][d]++;
+				graph_vide[a][0]++;
+				graph_vide[0][a]++;
+				graph_vide[d][a] =graph_vide[d][0];
+				graph_vide[a][d] =graph_vide[a][0];
+				printf("ERROR arc [%d;%d] = %d\n",d,a,graph_vide[d][a]);
+			
+			
+			}
+		
+		}
+			
 
 		
 	}
-		
+	if(missing_no() !=0){
+		generer_3_connexe();
+	}
 	
 	}
 }
 
+// swap deux poids
 void modifier_un_tout_petit_peut_le_graph(){
 	/// rappel : graph_vide[r][0] = degre de R 
 	int r=0;
 	while(graph_vide[r][0]<= 1	){
 		r=alea(N) ;
 	}
-	printf("\n %d\n",r);
 	/// j'ai r un sommet de degré 2 ou plus
 	/// je vais swap deux valeures d'arc , c'est tout
 	int a=alea(N) ;
@@ -242,7 +290,6 @@ void modifier_un_tout_petit_peut_le_graph(){
 	
 	while(graph_vide[r][a] == 0	){
 		 a=alea(N) ;
-		printf("\n a= %d\n",a);
 	}
 	while(graph_vide[r][b] == 0	|| b==a){
 		 b=alea(N) ;
@@ -322,13 +369,20 @@ int main(){
 
 
 //generer_graph(1); // ok
-//generer_arbre(); // pas ok 
-generer_3_connexe();
+//generer_arbre(); // pas ok // 1 missing from hightest sommet : sometimes 
+generer_3_connexe();// missing no =)
+
+//afficher();  // ok
+//modifier_un_tout_petit_peut_le_graph(); // ok
+
 
 afficher();
+printf("missing_no = %d",missing_no());
 
-modifier_un_tout_petit_peut_le_graph();
-afficher();
+for (int i=0;i<100;i++){
+	generer_arbre();
+}
+
 return 0;
 
 

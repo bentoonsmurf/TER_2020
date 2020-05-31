@@ -66,7 +66,7 @@ element fond_de_pile;
 signature init_signature(signature s){
 	s.sig =malloc(signature_taille*sizeof(int));
 	s.nb_arc=0; // marche pas ? c pas du java 
-	return s;
+	return s;  // du coup il faut return
 }
 
 pile empiler(pile p,element* e){// p.sommet =&e c'est ca que je veux
@@ -127,67 +127,81 @@ int metre_arcs_dans_pile(int sommet,pile p,int** matrice){
 	free(arcs);
 	return degre_sommet;
 }
-//operationell sauf middle
-signature ecrire_signature(signature sig, element e){
-	sig.sig[sig.nb_arc] = e.x;
+
+
+//operationel
+signature ecrire_signature(signature sig, int x,int ordre, int y){
+	sig.sig[sig.nb_arc] = x;
 	
 	sig.sig[sig.nb_arc] = sig.sig[sig.nb_arc]<<10;
-	sig.sig[sig.nb_arc] = sig.sig[sig.nb_arc] + e.ordre;
+	sig.sig[sig.nb_arc] = sig.sig[sig.nb_arc] + ordre;
 	
 	sig.sig[sig.nb_arc] = sig.sig[sig.nb_arc]<<10;
-	sig.sig[sig.nb_arc] = sig.sig[sig.nb_arc] + e.y;
+	sig.sig[sig.nb_arc] = sig.sig[sig.nb_arc] + y;
 	
 	sig.nb_arc=	sig.nb_arc + 1;
 	return sig;
 }
 
-void signer(int ** graph, signature s,int depart){
+signature signer(int ** graph, signature s,int depart){
 	int compteur_sommet=2;
-	int new_name[N+1][2];for (int i=0;i<N+1;i++){  new_name[i][0]==0;} // tableau remplis de 0
-	new_name[depart][0]==1;
+	int new_name[N+1][2];
+	for (int i=0;i<N+1;i++){  new_name[i][0]=0;new_name[i][1]=0;} // tableau remplis de 0
+	new_name[depart][0]=1;
 	// tab[i][0] contien le nouveaux nom/adress du sommet i
 	// tab[i][1] contien le degre 
 	
 	pile p=	init_pile(p);
 	new_name[depart][1]=metre_arcs_dans_pile(depart,p,graph);// pile remplis par des arcs partant du point de depart
 	element arc_courant;
+	
 	while(p.sommet != &fond_de_pile){
-		arc_courant=depiler(p);// c'est la que tu verifie le nom du sommet destination
-		s=ecrire_signature(s,arc_courant);
-		if(new_name[arc_courant.y][0]==0){// sommet non declarer pour le moment
+		arc_courant=depiler(p);
+
+		if(new_name[arc_courant.y][0]==0){// sommet arrive non declarer pour le moment
 			new_name[arc_courant.y][1]=metre_arcs_dans_pile(arc_courant.y,p,graph);/// on empile tous les arc partants du nouveau sommet
 			new_name[arc_courant.y][0]=compteur_sommet;
 			compteur_sommet++;
 		}
 		
+		s=ecrire_signature(s,new_name[ arc_courant.x][0], arc_courant.ordre,  new_name[ arc_courant.y][0]); // ecrire avec new name pas encore fait
+		
+		
 	}
-	
-	//not implemented yet
-	
-	//graph[][]    signature[]
+
 	
 	
-	
+	return s;
 }
 
+
+int signature_test(signature s){
+	return  s.nb_arc + 1;
+}
 
 int main(){
 	signature s=init_signature(s);
 	element e;
 	e.x=1; e.y = 2; e.ordre=1;  e.precedent=NULL;
 	
-	s=ecrire_signature(s, e);
-	printf("\n signature size  = %d\n",s.nb_arc);
+	s=ecrire_signature(s, e.x,e.ordre,e.y);
+	printf("\n signature size  = %d\n",s.nb_arc); //ok
 	printf("int = %d",s.sig[0]);
 	
 	
 	pile p=	init_pile(p); //p.sommet=&e;
 	
+	if(p.sommet == &fond_de_pile){printf("\nFOND DE PILE ICI\n"); }
 	printf("\navant EMPILAGE p.sommet.y = %d  \np.sommet.ordre= %d\n",p.sommet->y,p.sommet->ordre);
 	p=empiler(p,&e);
 	
 	printf("\n APRES p.sommet.y = %d  \np.sommet.ordre= %d\n",p.sommet->y,p.sommet->ordre);
 	
+	printf("\n avant test %d",s.nb_arc);
+	s.nb_arc= signature_test(s);
+
+	
+	printf("\n apres test %d \n",s.nb_arc);
 	return 0;
 }
 
