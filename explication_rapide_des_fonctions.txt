@@ -1,0 +1,125 @@
+void afficher_graph_du_paquet(int w){
+	affiche le graph situé dans la case W du paquet
+	affichage dans le terminal
+	paquet_de_graph[w][matrice a afficher]
+}
+
+void afficher_graph_vide(){
+}
+void afficher_pile(pile* p){
+}
+void afficher_signature(signature* sig){
+}
+int alea(int n){
+	renvoie un nombre compris dans  [1 : N] 
+}
+
+int comparer_2_signatures(signature* s1,signature* s2){
+	return 0 si les signatures sont differentes 
+	return 1 si elles sont identique
+}
+
+copie un graph dans un autre
+void copier_graph_vide_dans_paquet(int w){
+}
+void copier_graph_vide_dans_primaire(){
+}
+void copier_paquet_dans_graph_vide(int w){
+}
+void copier_primaire_dans_graph_vide(){
+}
+
+
+element depiler(pile* p){
+	retire un element de la pile
+}
+
+void ecrire_signature(signature* sig, int x,int ordre, int y){
+	ecrit toutes les info de l'arc a enregistrer dans 1 seul int 
+}
+
+void empiler(pile* p, int x,int ordre,int y){
+	ajoute un element au dessus de la pile
+}
+
+void generer_3_connexe(){
+	genere un graph 3 connexe et le place dans graph_vide
+}
+
+void generer_arbre(){
+	genere un arbre et le place dans graph_vide
+}
+
+void generer_cycle_simple(){
+	genere un cycle ( toujours le meme )
+	puis randomise le poid des arc 
+}
+
+pile *init_pile(){
+	malloc et ajout d'un element fond de pile
+}
+
+void init_random(){
+	
+  srandom(getpid()+ time(NULL));
+
+}
+
+signature* init_signature(){
+	malloc 
+}
+
+void litle_cup_test(signature* s){
+	ecrit le singature d'un petit graph de taille 4
+	afin de pouvoir le verifier manuellement 
+}
+
+int main(){
+
+}
+
+void metre_arcs_dans_pile(int sommet,pile* p,int matrice_nb){
+	met toutes les aretes sortantes du sommet sommet  sur la pile p
+	arrete de valeure 1 = au dessus de la pile  
+	de sorte que lors du depilage de la pile les arc de poid faible soit lut en premier
+	respectant ainsi la propriete des cartes
+
+}
+
+int missing_no(){
+	verifie que graph vide est bien conforme 
+	soit : le degre d'un sommet est le meme que son nombre d'arrete sortante/entrante
+}
+
+void modifier_un_tout_petit_peut_le_graph(){
+	echange le poid de 2 arrete de graph vide 
+}
+
+void remplis_paquet_avec_3_connexe(){
+	remplis paquet_de_graph avec des graphs 3 connexes
+}
+
+void remplis_paquet_avec_cycle(){
+	remplis paquet_de_graph avec des cycles
+}
+
+void signer(int graph_nb, signature* s,int depart){
+	ecrit la signature obtenue a partir du sommet de depart
+}
+
+void vider_graph_vide(){
+
+}
+
+void vider_signature(signature* s){
+
+}
+
+
+
+
+
+
+
+
+

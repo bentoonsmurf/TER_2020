@@ -15,3 +15,11 @@ C'est dans cette partie que les meilleures optimisations se cachent
 
 3: comparer les graphes
 cad comparer leur signature
+
+//////////////// objectif 
+
+
+comparer toutes les signatures de chaque graph avec la signature du graph primaire (pour un bon groupe de graph )
+avec la version lente et la version rapide
+
+recomencer avec des graphs generé differament

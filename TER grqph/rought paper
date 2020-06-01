@@ -1,44 +1,4 @@
 
-void generer_graph(int mode){
-	///mode 1 =graph sans contrainte
-	///mode 2 =graph 3complet
-	// autre fonction
-	///mode 3 =graph comprésé 
-	///mode 4 =graph comprese 3complet
-	
-
-
-	
-	
-	
-	if (mode == 1){
-		generer_cycle_simple();///un cycle pour le moment
-		
-		int nb_arc_a_ajouter;
-		int d,a;
-		/// j'ajoute des arcs j'usque a tomber sur 1 qui existe deja
-		while(nb_arc_a_ajouter < 10){
-			d=alea(N);
-			a=alea(N);
-			while(graph_vide[d][a] == 0 ){ 
-				
-				graph_vide[d][0]++;
-				graph_vide[0][d]++;
-				graph_vide[a][0]++;
-				graph_vide[0][a]++;
-				graph_vide[d][a]=graph_vide[d][0]; /// si le degre est 4 alors ce nouveau sommet
-				graph_vide[a][d]=graph_vide[a][0]; /// est forcement le 4iem sommet dans l'ordre des priorité
-				nb_arc_a_ajouter++;
-				
-				d=alea(N);
-				a=alea(N);		
-				
-			}
-			
-		}
-	}
-	
-}
 
 petite matrice
 1|1|0|0|0|
@@ -51,7 +11,6 @@ petite matrice
 
 little_cup_test {
 resultat atendu obtenu
-
 	depart = sommet 1
 	signature a 6 arcs 
 	(1,1,2)(2,1,1)(1,2,3)(3,1,1)(1,3,4)(4,1,1)
@@ -60,4 +19,87 @@ resultat atendu obtenu
 	signature a 6 arcs 
 	(1,1,2)(2,1,1)(2,2,3)(3,1,2)(2,3,4)(4,1,2)
 }
+N = 100
+ temps construction des graphs_cycle = 0.343924 sec
+ temps comparaison bete et mechante des graphs_cycle = 8.497487 sec
+ temps comparaison intelligente des graphs_cycle = 0.374721 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_arbres = 0.607371 sec
+ temps comparaison bete et mechante des graphs_arbres = 8.356308 sec
+ temps comparaison intelligente des graphs_arbres = 0.800464 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_3_connexe = 1.251962 sec
+ temps comparaison bete et mechante des graphs_3_connexe = 10.066112 sec
+ temps comparaison intelligente des graphs_3_connexe = 0.473781 sec
 
+
+N = 70
+ temps construction des graphs_cycle = 0.172865 sec
+ temps comparaison bete et mechante des graphs_cycle = 3.290195 sec
+ temps comparaison intelligente des graphs_cycle = 0.209375 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_arbres = 0.326193 sec
+ temps comparaison bete et mechante des graphs_arbres = 3.243859 sec
+ temps comparaison intelligente des graphs_arbres = 0.354103 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_3_connexe = 0.576450 sec
+ temps comparaison bete et mechante des graphs_3_connexe = 3.990426 sec
+ temps comparaison intelligente des graphs_3_connexe = 0.272729 sec
+
+
+N = 60
+ temps construction des graphs_cycle = 0.127109 sec
+ temps comparaison bete et mechante des graphs_cycle = 2.228501 sec
+ temps comparaison intelligente des graphs_cycle = 0.164892 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_arbres = 0.255609 sec
+ temps comparaison bete et mechante des graphs_arbres = 2.200545 sec
+ temps comparaison intelligente des graphs_arbres = 0.316543 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_3_connexe = 0.483290 sec
+ temps comparaison bete et mechante des graphs_3_connexe = 2.741651 sec
+ temps comparaison intelligente des graphs_3_connexe = 0.212731 sec
+
+
+
+N = 50
+ temps construction des graphs_cycle = 0.096137 sec
+ temps comparaison bete et mechante des graphs_cycle = 1.353966 sec
+ temps comparaison intelligente des graphs_cycle = 0.125051 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_arbres = 0.193856 sec
+ temps comparaison bete et mechante des graphs_arbres = 1.340688 sec
+ temps comparaison intelligente des graphs_arbres = 0.231550 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_3_connexe = 0.357949 sec
+ temps comparaison bete et mechante des graphs_3_connexe = 1.748774 sec
+ temps comparaison intelligente des graphs_3_connexe = 0.179777 sec
+
+
+N = 40
+ temps construction des graphs_cycle = 0.096569 sec
+ temps comparaison bete et mechante des graphs_cycle = 1.360594 sec
+ temps comparaison intelligente des graphs_cycle = 0.136616 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_arbres = 0.206866 sec
+ temps comparaison bete et mechante des graphs_arbres = 1.337040 sec
+ temps comparaison intelligente des graphs_arbres = 0.233410 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_3_connexe = 0.361148 sec
+ temps comparaison bete et mechante des graphs_3_connexe = 1.715171 sec
+ temps comparaison intelligente des graphs_3_connexe = 0.164630 sec
+
+
+
+N = 30 
+ temps construction des graphs_cycle = 0.036927 sec
+ temps comparaison bete et mechante des graphs_cycle = 0.413477 sec
+ temps comparaison intelligente des graphs_cycle = 0.068993 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_arbres = 0.099098 sec
+ temps comparaison bete et mechante des graphs_arbres = 0.407224 sec
+ temps comparaison intelligente des graphs_arbres = 0.107317 sec
+--------------------------------------------------------------------------
+ temps construction des graphs_3_connexe = 0.162543 sec
+ temps comparaison bete et mechante des graphs_3_connexe = 0.555847 sec
+ temps comparaison intelligente des graphs_3_connexe = 0.079765 sec

@@ -5,8 +5,8 @@
 #include <math.h>
 #include <unistd.h>
 #include <time.h>
-
-#define N 30// le nombre  de sommet du graph 
+//N le nombre  de sommet du graph 
+#define N 30 // 30 = presque impossible de trouver des isomorphs , 20 = tres tres rare , 10 = frequent
 #define taille_paquet 1000
 #define signature_taille 1000
 
@@ -64,6 +64,15 @@ void afficher_graph_vide(){
 		}printf("\n");
 }
 }
+void afficher_graph_primaire(){
+printf("\ngraph primaire----------------------------------------------------\n");
+		for (int i=N;i>=0;i--){
+	for(int j=0;j<N+1;j++){
+		printf("%d|",graph_primaire[i][j]);
+		}printf("\n");
+}
+printf("-------------------------------------------------------------------\n");
+}
 void afficher_graph_du_paquet(int w){
 	printf("\n");
 		for (int i=N;i>=0;i--){
@@ -91,7 +100,6 @@ int alea(int n){
 	if (n==0)return 0;// en theorie ca sert a rien mais on est jamais trop prudent
 	if (n==1)return 1;
 	return (int)(random()% (n-1) +1);// return un sommet 
-
 }
 void vider_graph_vide(){
 	for (int i=0;i<N+1;i++){
@@ -216,6 +224,7 @@ void generer_cycle_simple(){
 	
 	
 		for(int j=0;j< N/2 ;j++){
+			//for(int j=0;j< 2 ;j++){
 			modifier_un_tout_petit_peut_le_graph();
 		}
 
@@ -397,6 +406,19 @@ void remplis_paquet_avec_cycle(){
 	}
 
 }
+void remplis_paquet_avec_arbre(){
+
+	for (int w=0;w<taille_paquet;w++){
+		generer_arbre();
+	
+		for (int i=0;i<N+1;i++){
+			for(int j=0;j<N+1;j++){
+				paquet_de_graph[w][i][j]  = graph_vide[i][j];
+			}
+		}
+	}
+
+}
 void copier_graph_vide_dans_paquet(int w){
 	
 		for (int i=0;i<N+1;i++){
@@ -437,8 +459,8 @@ void copier_primaire_dans_graph_vide(){
 signature* init_signature(){
 	signature* s=malloc(sizeof(signature*));
 	s->sig =malloc(signature_taille*sizeof(int));
-	s->nb_arc=0; // marche pas ? c pas du java ?
-	return s;  // du coup il faut return
+	s->nb_arc=0; 
+	return s;  
 }
 void vider_signature(signature* s){
 	for (int i=0;i< s->nb_arc ; i++){
@@ -447,15 +469,7 @@ void vider_signature(signature* s){
 	}
 	s->nb_arc=0;
 }
-//operationel
-pile empiler_deprecated(pile p,element* e){// p.sommet <---- &e c'est ca que je veux
-	//e.precedent=p.sommet;
-	
-	element* tmp=p.sommet;
-	p.sommet =e;
-	p.sommet->precedent=tmp;
-	return p;
-}
+
 
 void empiler(pile* p, int x,int ordre,int y)
 {
@@ -491,12 +505,6 @@ pile *init_pile()
 }
 
 
-element depiler_deprecated(pile p){
-	element e=*p.sommet;
-	p.sommet= p.sommet->precedent;
-	return e;
-}
-
 element depiler(pile* p)
 {
     if (p == NULL)
@@ -524,7 +532,6 @@ element depiler(pile* p)
 // operationel
 ///met toutes les aretes sortantes du sommet sur la pile
 /// arrete de valeure 1 = sommet de la pile  
-///return degre du sommet
 void metre_arcs_dans_pile(int sommet,pile* p,int matrice_nb){
 	if (sommet != 0){
 	int degre_sommet = paquet_de_graph[matrice_nb][sommet][0];
@@ -550,7 +557,6 @@ void metre_arcs_dans_pile(int sommet,pile* p,int matrice_nb){
 	
 	
 	free(arcs);
-	//printf("fin de metre dans pile \n");
 }
 }
 
@@ -565,8 +571,7 @@ void ecrire_signature(signature* sig, int x,int ordre, int y){
 	sig->sig[sig->nb_arc] = sig->sig[sig->nb_arc]<<10;
 	sig->sig[sig->nb_arc] = sig->sig[sig->nb_arc] + y;
 	
-	sig->nb_arc++;//  =	sig->nb_arc + 1;
-	//return sig;
+	sig->nb_arc++;
 }
 
 /// return 0 si les signatures sont differentes 
@@ -580,6 +585,7 @@ int comparer_2_signatures(signature* s1,signature* s2){
 	return 1;
 }
 
+
 void signer(int graph_nb, signature* s,int depart){
 	vider_signature(s);
 	int compteur_sommet=2;
@@ -591,11 +597,8 @@ void signer(int graph_nb, signature* s,int depart){
 	element arc_courant;
 	pile* p=init_pile();
 	new_name[depart][1]=paquet_de_graph[graph_nb][depart][0];
-	//printf("degre de new name = %d au debut de la fonction\n",new_name[depart][1]);//degre ok
 			
 	metre_arcs_dans_pile(depart,p,graph_nb);/// pile remplis par des arcs partant du point de depart
-
-//afficher_pile(p);// pile non remplis
 
 	while(p->sommet != p->fond){
 		arc_courant = depiler(p);
@@ -608,16 +611,53 @@ void signer(int graph_nb, signature* s,int depart){
 			compteur_sommet++;
 		}
 		
-		ecrire_signature(s,new_name[ arc_courant.x][0], arc_courant.ordre,  new_name[ arc_courant.y][0]); // ecrire avec new name pas encore fait
-		//printf("signature a %d arcs a la fin de lercriture\n",s->nb_arc);
-		//afficher_pile(p);
+		ecrire_signature(s,new_name[ arc_courant.x][0], arc_courant.ordre,  new_name[ arc_courant.y][0]);
+		
+	}
+}
+
+
+
+
+int signer_intelligemment(int graph_nb, signature* s,int depart){
+	vider_signature(s);
+	int compteur_sommet=2;
+	int new_name[N+1][2];
+	for (int i=0;i<N+1;i++){  new_name[i][0]=0;new_name[i][1]=0;} // tableau remplis de 0
+	new_name[depart][0]=1;
+	// tab[i][0] contien le nouveaux nom/adress du sommet i
+	// tab[i][1] contien le degre 
+	element arc_courant;
+	pile* p=init_pile();
+	new_name[depart][1]=paquet_de_graph[graph_nb][depart][0];
+			
+	metre_arcs_dans_pile(depart,p,graph_nb);/// pile remplis par des arcs partant du point de depart
+
+	while(p->sommet != p->fond){
+		arc_courant = depiler(p);
+
+		if(new_name[arc_courant.y][0]==0){// sommet arrive non declarer pour le moment
+			
+			new_name[arc_courant.y][1]=paquet_de_graph[graph_nb][arc_courant.y][0];// degre
+			metre_arcs_dans_pile(arc_courant.y,p,graph_nb);/// on empile tous les arc partants du nouveau sommet
+			new_name[arc_courant.y][0]=compteur_sommet;
+			compteur_sommet++;
+		}
+		
+		ecrire_signature(s,new_name[ arc_courant.x][0], arc_courant.ordre,  new_name[ arc_courant.y][0]);
+		
+		if(s->sig[s->nb_arc-1] ==  signature_primaire->sig[s->nb_arc-1] ){
+			// do nothing
+		}else{
+			return 0;
+		}
 		
 	}
 
-	
-	//printf("signature a %d arcs a la fin de la signature\n",s->nb_arc);
-	//return s;
+	return 1;
 }
+
+
 
 void afficher_signature(signature* sig){
 	int a,b,c;
@@ -632,6 +672,7 @@ void afficher_signature(signature* sig){
 	printf("\n");
 }
 
+// le resultat est convaincant 
 void litle_cup_test(signature* s){
 	vider_graph_vide();
 		graph_vide[0][0] = 0;
@@ -675,6 +716,40 @@ afficher_signature(s);
 	
 }
 
+int tout_comparer(signature* s){
+	int graph_isomorphe = -1;
+	for (int w=0;w < taille_paquet;w++){
+		
+		for (int depart=1;depart<N+1 ;depart++){
+			signer(w,s,depart);
+			if (comparer_2_signatures(signature_primaire,s) == 1){
+				graph_isomorphe=w;
+				printf("le graph %d est isomorph avec le graph primaire\n",w);
+				afficher_graph_du_paquet(w);
+			}
+			
+		}
+		
+	}
+	return graph_isomorphe;
+}
+int tout_comparer_intelligemment(signature* s){
+	int graph_isomorphe = -1;
+	for (int w=0;w < taille_paquet;w++){
+		
+		for (int depart=1;depart<N+1 ;depart++){
+			signer_intelligemment(w,s,depart);
+			if (comparer_2_signatures(signature_primaire,s) == 1){
+				graph_isomorphe=w;
+				printf("le graph %d est isomorph avec le graph primaire\n",w);
+				afficher_graph_du_paquet(w);
+			}
+			
+		}
+		
+	}
+	return graph_isomorphe;
+}
 int main(){
 	/// inits 
 init_random();
@@ -684,22 +759,126 @@ pile* p=init_pile();
 
 
 
-clock_t temps_depart_test1; /* Temps initial en micro-secondes */
-clock_t temps_fin_test1; /* Temps final en micro-secondes */
+clock_t temps_depart; /* Temps initial en micro-secondes */
+clock_t temps_fin; /* Temps final en micro-secondes */
 float temps_cpu; /* Temps total en secondes */
-temps_depart_test1 = clock ();
+temps_depart = clock ();
 
 //remplis_paquet_avec_3_connexe();
+
+generer_cycle_simple();
+copier_graph_vide_dans_primaire();
+copier_graph_vide_dans_paquet(1);
+signer(1,signature_primaire,1);
+
 remplis_paquet_avec_cycle();
 
-copier_graph_vide_dans_primaire();	
+afficher_graph_primaire();
 
-litle_cup_test(s);
+//copier_primaire_dans_graph_vide();
+//copier_graph_vide_dans_paquet(400);
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps construction des graphs_cycle = %Lf sec\n",(long double)temps_cpu);
+
+temps_depart =temps_fin;
+
+tout_comparer(s);
 
 
-temps_fin_test1 = clock ();
-temps_cpu = (temps_fin_test1 - temps_depart_test1) * 1e-6;
-printf(" temps construction des graphs = %Lf sec\n",(long double)temps_cpu);
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps comparaison bete et mechante des graphs_cycle = %Lf sec\n",(long double)temps_cpu);////////////////////////////////////////
+
+temps_depart =temps_fin;
+
+tout_comparer_intelligemment(s);
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps comparaison intelligente des graphs_cycle = %Lf sec\n",(long double)temps_cpu);
+
+printf("--------------------------------------------------------------------------\n");
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+generer_arbre();
+copier_graph_vide_dans_primaire();
+copier_graph_vide_dans_paquet(1);
+signer(1,signature_primaire,1);
+
+remplis_paquet_avec_arbre();
+
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps construction des graphs_arbres = %Lf sec\n",(long double)temps_cpu);
+
+temps_depart =temps_fin;
+
+tout_comparer(s);
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps comparaison bete et mechante des graphs_arbres = %Lf sec\n",(long double)temps_cpu);////////////////////////////////////////
+
+temps_depart =temps_fin;
+
+tout_comparer_intelligemment(s);
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps comparaison intelligente des graphs_arbres = %Lf sec\n",(long double)temps_cpu);
+
+
+printf("--------------------------------------------------------------------------\n");
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+generer_3_connexe();
+copier_graph_vide_dans_primaire();
+copier_graph_vide_dans_paquet(1);
+signer(1,signature_primaire,1);
+
+remplis_paquet_avec_3_connexe();
+
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps construction des graphs_3_connexe = %Lf sec\n",(long double)temps_cpu);
+
+temps_depart =temps_fin;
+
+tout_comparer(s);
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps comparaison bete et mechante des graphs_3_connexe = %Lf sec\n",(long double)temps_cpu);////////////////////////////////////////
+
+temps_depart =temps_fin;
+
+tout_comparer_intelligemment(s);
+
+
+temps_fin = clock ();
+temps_cpu = (temps_fin - temps_depart) * 1e-6;
+printf(" temps comparaison intelligente des graphs_3_connexe = %Lf sec\n",(long double)temps_cpu);
+
+
+
+
+
 
 
 return 0;

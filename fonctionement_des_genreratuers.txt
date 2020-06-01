@@ -1,38 +1,44 @@
-tout mes graph on en commun leur connexite
+tout mes graph on en commun leur connexité
 
-je grenere donc un graph connexe 
+il me faut donc un graph connexe 
 
 pour ce faire je crée des structures simples 
 
 une chaine :
 	je met tout les sommet dans un sac
-	j'en prend un que je relie avec le precedent
-	je le retire du sac 
+	je relie le precedent avec le suivant
+	je retire suivant du sac 
 	
 	ansi de suite j'usqu'a epuisement du sac
 	
 	
 	
 un arbre
-	je creer un sac_1 vide
+	je creer un sac_1 vide + sommet de depart
 	je met tout les sommet dans un autre sac_2
-	j'en prend un sommet A de sac_2 que je relie avec un sommet D du sac_1
+	je prend un sommet D de sac_1 que je relie avec un sommet A du sac_2
 	je retire A du sac_2 
-	je met un sommet D de plus dans le sac_1 
+	je met le sommet A dans le sac_1 
 	
 	ansi de suite j'usqu'a epuisement du sac_2
 	
+	les premiers sommet a etre placé dans le sac_1 on statistiquement plus de chance de servir
+	ce qui a pour consequance de creer un graph qui resemble a un arbre
 
 un 3-regulier 
 Une condition nécessaire et suffisante pour l'existence d'un graphe k-régulier à n sommets
  est que nk soit pair et que n >= k+1
 
-
-	je part d'une base : un cycle
-	et j'ajoute des arretes pour compléter le graph 
+	ici k = 3 donc n doit etre pair 
 	
-	ici k = 3 donc N doit etre pair 
-	donc je peut relier des paires de sommets j'usqu'a relier tout les sommets du graph
+	je part d'une base : un cycle
+	
+	chaque sommet est de degré 2 
+	chaque arete augmente le degre de 2 sommets 
+	j'ajoute donc au graph n/2 aretes
+	
+	
+	
 	
 	
 	
