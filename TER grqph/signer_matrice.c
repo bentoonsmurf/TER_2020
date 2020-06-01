@@ -25,6 +25,11 @@ ce qui est la particularité des cartes : il y a un ordre dans le quel lire les 
 
 #define N 30// le nombre  de sommet du graph 
 #define signature_taille 1000
+#define taille_paquet 1000
+
+int graph_vide[N+1][N+1];
+int paquet_de_graph[taille_paquet][N+1][N+1];
+int graph_primaire[N+1][N+1];
 /// 1 int =  2 bits vides +10 x 3bit qui on du sens [somme_1  , arc ,  sommet_2]
 
 typedef struct element{
@@ -56,50 +61,85 @@ typedef struct signature signature;
 
 
 
-int etalon[N+1][N+1]; // la case 0 contien le degré du sommet 
-int potentielle_isomorphe[N+1][N+1];
-int signature_etalon[signature_taille];
-int signature_isomorph[signature_taille];
+
 element fond_de_pile;
 
 
 signature init_signature(signature s){
 	s.sig =malloc(signature_taille*sizeof(int));
-	s.nb_arc=0; // marche pas ? c pas du java 
+	s.nb_arc=0; // marche pas ? c pas du java ?
 	return s;  // du coup il faut return
 }
 
-pile empiler(pile p,element* e){// p.sommet =&e c'est ca que je veux
+pile empiler_deprecated(pile p,element* e){// p.sommet <---- &e c'est ca que je veux
 	//e.precedent=p.sommet;
-	
-	element* tmp=p.sommet;
+printf("p.sommet debut empilage= %d\n",p.sommet);
+	e->precedent=p.sommet;
 	p.sommet =e;
-	p.sommet->precedent=tmp;
+printf("p.sommet apres empilage= %d\n",p.sommet);
 	return p;
 }
-pile init_pile(pile p){
+
+
+void empiler(pile* p, int x,int ordre,int y)
+{
+    element *nouveau = malloc(sizeof(*nouveau));
+    if (p == NULL || nouveau == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    nouveau->x = x;
+    nouveau->ordre = ordre;
+    nouveau->y = y;
+    nouveau->precedent = p->sommet;
+    p->sommet = nouveau;
+}
+void init_pile(pile* p){
 	fond_de_pile.x=0;
 	fond_de_pile.y=0;
 	fond_de_pile.ordre=0;
 	fond_de_pile.precedent=&fond_de_pile;
 	
-	p.sommet=&fond_de_pile;
-	p.fond=&fond_de_pile;
-	empiler(p,&fond_de_pile);
-	return p;
+
+	empiler(p,fond_de_pile.x, fond_de_pile.ordre,fond_de_pile.y);
+	p->sommet=&fond_de_pile;
+	p->fond=&fond_de_pile;
+	//return p;
 }
 
-element depiler(pile p){
+element depiler_deprecated(pile p){
 	element e=*p.sommet;
 	p.sommet= p.sommet->precedent;
 	return e;
+}
+element depiler(pile* p)
+{
+    if (p == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    element valueDepile ;
+    element* elementDepile = p->sommet;
+
+    if (p != NULL && p->sommet != NULL)
+    {
+        valueDepile.x = elementDepile->x;
+         valueDepile.ordre = elementDepile->ordre;
+          valueDepile.y = elementDepile->y;
+         p->sommet = elementDepile->precedent;
+        free(elementDepile);
+    }
+
+    return valueDepile;
 }
 
 // operationel
 ///met toutes les aretes sortantes du sommet sur la pile
 /// arrete de valeure 1 = sommet de la pile  
 ///return degre du sommet
-int metre_arcs_dans_pile(int sommet,pile p,int** matrice){
+int metre_arcs_dans_pile(int sommet,pile* p,int** matrice){
 	int degre_sommet = matrice[sommet][0];
     int* arcs =malloc((degre_sommet+1)*sizeof(int));// presque toutes les info sont implicites 
     
@@ -115,12 +155,8 @@ int metre_arcs_dans_pile(int sommet,pile p,int** matrice){
 	/// on empile en partant du plus grand 
 	/// comme ca l'arc de poid faible  est  au dessu
 	for (int j=degre_sommet;j>1;j--){
-		element e;
-		e.precedent=p.sommet;
-		e.x=sommet;
-		e.ordre=j;//<------------------------------------
-		e.y=arcs[j];
-		empiler(p,&e);
+
+		empiler(p,sommet,j,arcs[j]);
 	}
 	
 	
@@ -151,7 +187,7 @@ signature signer(int ** graph, signature s,int depart){
 	// tab[i][0] contien le nouveaux nom/adress du sommet i
 	// tab[i][1] contien le degre 
 	
-	pile p=	init_pile(p);
+	pile* p;	init_pile(p);
 	new_name[depart][1]=metre_arcs_dans_pile(depart,p,graph);// pile remplis par des arcs partant du point de depart
 	element arc_courant;
 	
@@ -175,10 +211,31 @@ signature signer(int ** graph, signature s,int depart){
 }
 
 
-int signature_test(signature s){
-	return  s.nb_arc + 1;
+signature signature_test(signature s){
+	s.nb_arc ++;
+	return  s;
 }
 
+pile empiler_test(pile p){
+		element e;
+	e.x=1; e.y = 2; e.ordre=1;  e.precedent=NULL;
+		p=empiler(p,&e);
+	return p;
+}
+pile empiler_test_2(pile p){
+		element e;
+	e.x=3; e.y = 3; e.ordre=3;  e.precedent=NULL;
+		p=empiler(p,&e);
+	return p;
+}
+void afficher_pile(pile p){
+	printf("affiche pile \n");
+		//while(p.sommet != &fond_de_pile){
+			while(p.sommet->ordre != 0){
+					printf("element (%d,%d,%d)\n",p.sommet->x,p.sommet->ordre,p.sommet->y);
+					p.sommet=p.sommet->precedent;
+			}
+}
 int main(){
 	signature s=init_signature(s);
 	element e;
@@ -192,15 +249,21 @@ int main(){
 	pile p=	init_pile(p); //p.sommet=&e;
 	
 	if(p.sommet == &fond_de_pile){printf("\nFOND DE PILE ICI\n"); }
-	printf("\navant EMPILAGE p.sommet.y = %d  \np.sommet.ordre= %d\n",p.sommet->y,p.sommet->ordre);
+	printf("\navant EMPILAGE \n p.sommet.y = %d  \np.sommet.ordre= %d\n",p.sommet->y,p.sommet->ordre);
 	p=empiler(p,&e);
+	p=empiler(p,&e);
+	//p=empiler_test(p);
+	//p=empiler_test_2(p);
+	printf("\n APRES \np.sommet.y = %d  \np.sommet.ordre= %d\n",p.sommet->y,p.sommet->ordre);
+	printf("\n recursif un peut  \np.sommet.precedent y = %d  \np.sommet.precedent.ordre= %d\n",p.sommet->precedent->y,p.sommet->precedent->ordre);
+	printf("\n double recursif p.sommet.precedent.precedent y= %d\n",p.sommet->precedent->precedent->y);
+	printf(" adress du sommet %d\n",p.sommet);
+	printf(" adress en dessous sommet %d\n",p.sommet->precedent);
 	
-	printf("\n APRES p.sommet.y = %d  \np.sommet.ordre= %d\n",p.sommet->y,p.sommet->ordre);
-	
-	printf("\n avant test %d",s.nb_arc);
-	s.nb_arc= signature_test(s);
+	printf("\n signature avant test %d",s.nb_arc);
+	s= signature_test(s);
 
-	
+//afficher_pile(p);
 	printf("\n apres test %d \n",s.nb_arc);
 	return 0;
 }
