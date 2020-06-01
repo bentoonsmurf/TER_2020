@@ -45,8 +45,7 @@ typedef struct signature signature;
 int graph_vide[N+1][N+1];
 int paquet_de_graph[taille_paquet][N+1][N+1];
 int graph_primaire[N+1][N+1];
-signature signature_primaire;
-element fond_de_pile;
+signature* signature_primaire;
 
 
 
@@ -115,6 +114,37 @@ int missing_no(){ 	//si le graph est conforme return, 0
 }
 return 0;	
 }
+
+
+// swap deux poids
+void modifier_un_tout_petit_peut_le_graph(){
+
+	/// rappel : graph_vide[r][0] = degre de R 
+	int r=0;
+	while(graph_vide[r][0]<= 1	){
+		r=alea(N) ;
+	}
+	/// j'ai r un sommet de degré 2 ou plus
+	/// je vais swap deux valeures d'arc , c'est tout
+	int a=alea(N) ;
+	int b=alea(N) ;
+	
+	while(graph_vide[r][a] == 0	){
+		 a=alea(N) ;
+	}
+	for(int brute_force =1;brute_force <N+1;brute_force++){
+		
+		 
+		 if((graph_vide[r][a] != graph_vide[r][brute_force]) && (graph_vide[r][brute_force] != 0)){
+			 	int tmp = graph_vide[r][a];
+				graph_vide[r][a] = graph_vide[r][brute_force];
+				graph_vide[r][brute_force] = tmp;
+				brute_force= N+2;
+		 }
+	}
+}
+
+
 /// pour generer un arbre et pas une chaine il faut une 2 em pool
 /// qui contiendra les sommets de depart
 void generer_cycle_simple(){
@@ -131,16 +161,19 @@ void generer_cycle_simple(){
 	
 	int d,a,first;
 	first = alea(p.size);// 0 existe pas ici 
-	a     = first;
+	a = first;
+	d = first;
 	p.p[a-1]= p.p[p.size-1];	p.size--; /// on sort le premier sommet de la pool
 	int r;
 /// etape 2 vider la pool
 
 	while(p.size > 1){ /// inscrit 2 arc dans la matrice
+		
+		// d et a = 1 et 2
 		d=a;
 		r=alea(p.size)-1 ;//alea ne renvoie pas 0
 		a=p.p[ r]; // un element dans la pool donc pas 0
-
+	// d et a = 2 et 3
 		graph_vide[d][0]++;/// d comme depart
 		graph_vide[0][d]++;
 		graph_vide[a][0]++;
@@ -180,8 +213,13 @@ void generer_cycle_simple(){
 		graph_vide[d][a ]= graph_vide[d][0];
 		graph_vide[a][d ]= graph_vide[a][0];
 	
-}
+	
+	
+		for(int j=0;j< N/2 ;j++){
+			modifier_un_tout_petit_peut_le_graph();
+		}
 
+}
 
 
 void generer_arbre(){
@@ -331,88 +369,6 @@ void generer_3_connexe(){
 	}
 }
 
-// swap deux poids
-void modifier_un_tout_petit_peut_le_graph(){
-	/// rappel : graph_vide[r][0] = degre de R 
-	int r=0;
-	while(graph_vide[r][0]<= 1	){
-		r=alea(N) ;
-	}
-	/// j'ai r un sommet de degré 2 ou plus
-	/// je vais swap deux valeures d'arc , c'est tout
-	int a=alea(N) ;
-	int b=alea(N) ;
-	
-	while(graph_vide[r][a] == 0	){
-		 a=alea(N) ;
-	}
-	while(graph_vide[r][b] == 0	|| b==a){
-		 b=alea(N) ;
-	}
-	int tmp = graph_vide[r][a];
-	
-	graph_vide[r][a] = graph_vide[r][b];
-	graph_vide[r][b] = tmp;
-	//graph_vide[r][0] = 0; // pour trouver la ligne 
-}
-
-void generer_graph(int mode){
-	///mode 1 =graph sans contrainte
-	///mode 2 =graph 3complet
-	// autre fonction
-	///mode 3 =graph comprésé 
-	///mode 4 =graph comprese 3complet
-	
-
-
-	
-	
-	
-	if (mode == 1){
-		generer_cycle_simple();///un cycle pour le moment
-		
-		int nb_arc_a_ajouter;
-		int d,a;
-		/// j'ajoute des arcs j'usque a tomber sur 1 qui existe deja
-		while(nb_arc_a_ajouter < 10){
-			d=alea(N);
-			a=alea(N);
-			while(graph_vide[d][a] == 0 ){ 
-				
-				graph_vide[d][0]++;
-				graph_vide[0][d]++;
-				graph_vide[a][0]++;
-				graph_vide[0][a]++;
-				graph_vide[d][a]=graph_vide[d][0]; /// si le degre est 4 alors ce nouveau sommet
-				graph_vide[a][d]=graph_vide[a][0]; /// est forcement le 4iem sommet dans l'ordre des priorité
-				nb_arc_a_ajouter++;
-				
-				d=alea(N);
-				a=alea(N);
-				
-				
-			}
-			
-		}
-	}
-	
-	
-}
-
-
-
-void sample(){ // pour tester le sens dans le quel j'affiche
-graph_vide[N][N]=9;// n'a d'interet qui si j'affiche dans le terminal
-graph_vide[N][1]=1;
-graph_vide[N][2]=2;
-graph_vide[N][3]=3;
-graph_vide[1][N]=11;
-graph_vide[2][N]=21;
-graph_vide[3][N]=31;
-graph_vide[0][0]=-1;
-graph_vide[1][0]=-2;
-graph_vide[2][0]=-3;
-}
 
 /// remplis le paquet de graph avec des 3connexe
 void remplis_paquet_avec_3_connexe(){
@@ -428,13 +384,68 @@ void remplis_paquet_avec_3_connexe(){
 	}
 
 }
-///////////////////////////////////////////// partie signature ////////////////////////////////////////////////
+void remplis_paquet_avec_cycle(){
 
+	for (int w=0;w<taille_paquet;w++){
+		generer_cycle_simple();
+	
+		for (int i=0;i<N+1;i++){
+			for(int j=0;j<N+1;j++){
+				paquet_de_graph[w][i][j]  = graph_vide[i][j];
+			}
+		}
+	}
+
+}
+void copier_graph_vide_dans_paquet(int w){
+	
+		for (int i=0;i<N+1;i++){
+			for(int j=0;j<N+1;j++){
+				paquet_de_graph[w][i][j]  = graph_vide[i][j];
+			}
+		}
+	
+}
+void copier_paquet_dans_graph_vide(int w){
+	
+		for (int i=0;i<N+1;i++){
+			for(int j=0;j<N+1;j++){
+				graph_vide[i][j]= paquet_de_graph[w][i][j]  ;
+			}
+		}
+	
+}
+void copier_graph_vide_dans_primaire(){
+	
+		for (int i=0;i<N+1;i++){
+			for(int j=0;j<N+1;j++){
+				graph_primaire[i][j]  = graph_vide[i][j];
+			}
+		}
+}
+void copier_primaire_dans_graph_vide(){
+	
+		for (int i=0;i<N+1;i++){
+			for(int j=0;j<N+1;j++){
+				graph_vide[i][j]  = graph_primaire[i][j];
+			}
+		}
+}
+
+///////////////////////////////////////////// partie signature ////////////////////////////////////////////////
+///////////////////////////////////////////// ///////////////////////////////////////////// ///////////////////
 signature* init_signature(){
 	signature* s=malloc(sizeof(signature*));
 	s->sig =malloc(signature_taille*sizeof(int));
 	s->nb_arc=0; // marche pas ? c pas du java ?
 	return s;  // du coup il faut return
+}
+void vider_signature(signature* s){
+	for (int i=0;i< s->nb_arc ; i++){
+		s->sig[i]=0;
+		
+	}
+	s->nb_arc=0;
 }
 //operationel
 pile empiler_deprecated(pile p,element* e){// p.sommet <---- &e c'est ca que je veux
@@ -460,18 +471,7 @@ void empiler(pile* p, int x,int ordre,int y)
     nouveau->precedent = p->sommet;
     p->sommet = nouveau;
 }
-void init_pile_deprecated(pile* p){
-	fond_de_pile.x=0;
-	fond_de_pile.y=0;
-	fond_de_pile.ordre=0;
-	fond_de_pile.precedent=&fond_de_pile;
-	
 
-	empiler(p,0,0,0);
-	p->sommet=&fond_de_pile;
-	p->fond=&fond_de_pile;
-	//return p;
-}
 pile *init_pile()
 {
     pile * p = malloc(sizeof(pile*));
@@ -540,7 +540,7 @@ void metre_arcs_dans_pile(int sommet,pile* p,int matrice_nb){
 	}
 	arcs[0]=degre_sommet;
 	
-	printf("degre du sommet %d = %d\n",sommet,degre_sommet);
+	//printf("degre du sommet %d = %d\n",sommet,degre_sommet);
 	/// on empile en partant du plus grand 
 	/// comme ca l'arc de poid faible  est  au dessu
 	for (int j=degre_sommet;j>=1;j--){
@@ -550,7 +550,7 @@ void metre_arcs_dans_pile(int sommet,pile* p,int matrice_nb){
 	
 	
 	free(arcs);
-	printf("fin de metre dans pile \n");
+	//printf("fin de metre dans pile \n");
 }
 }
 
@@ -569,7 +569,19 @@ void ecrire_signature(signature* sig, int x,int ordre, int y){
 	//return sig;
 }
 
+/// return 0 si les signatures sont differentes 
+int comparer_2_signatures(signature* s1,signature* s2){
+	if (s1->nb_arc != s2->nb_arc) return 0;
+	
+	for(int i=0;i<s1->nb_arc;i++){
+		if (s1->sig[i] != s2->sig[i]) return 0;
+		
+	}
+	return 1;
+}
+
 void signer(int graph_nb, signature* s,int depart){
+	vider_signature(s);
 	int compteur_sommet=2;
 	int new_name[N+1][2];
 	for (int i=0;i<N+1;i++){  new_name[i][0]=0;new_name[i][1]=0;} // tableau remplis de 0
@@ -597,13 +609,13 @@ void signer(int graph_nb, signature* s,int depart){
 		}
 		
 		ecrire_signature(s,new_name[ arc_courant.x][0], arc_courant.ordre,  new_name[ arc_courant.y][0]); // ecrire avec new name pas encore fait
-		printf("signature a %d arcs a la fin de lercriture\n",s->nb_arc);
-		afficher_pile(p);
+		//printf("signature a %d arcs a la fin de lercriture\n",s->nb_arc);
+		//afficher_pile(p);
 		
 	}
 
 	
-			printf("signature a %d arcs a la fin de la signature\n",s->nb_arc);
+	//printf("signature a %d arcs a la fin de la signature\n",s->nb_arc);
 	//return s;
 }
 
@@ -620,34 +632,75 @@ void afficher_signature(signature* sig){
 	printf("\n");
 }
 
+void litle_cup_test(signature* s){
+	vider_graph_vide();
+		graph_vide[0][0] = 0;
+		graph_vide[0][1] = 3;
+		graph_vide[0][2] = 1;
+		graph_vide[0][3] = 1;
+		graph_vide[0][4] = 1;
+	
+		graph_vide[1][0] = 3;
+		graph_vide[1][1] = 0;
+		graph_vide[1][2] = 1;
+		graph_vide[1][3] = 2;
+		graph_vide[1][4] = 3;
+		
+		graph_vide[2][0] = 1;
+		graph_vide[2][1] = 1;
+		graph_vide[2][2] = 0;
+		graph_vide[2][3] = 0;
+		graph_vide[2][4] = 0;
+		
+		graph_vide[3][0] = 1;
+		graph_vide[3][1] = 1;
+		graph_vide[3][2] = 0;
+		graph_vide[3][3] = 0;
+		graph_vide[3][4] = 0;
+		
+		graph_vide[4][0] = 1;
+		graph_vide[4][1] = 1;
+		graph_vide[4][2] = 0;
+		graph_vide[4][3] = 0;
+		graph_vide[4][4] = 0;
+		
+		copier_graph_vide_dans_paquet(1);
+		
+		afficher_graph_du_paquet(1);
+signer(1,s , 1);
+afficher_signature(s);
+signer(1,s , 2);
+afficher_signature(s);
+
+	
+}
 
 int main(){
 	/// inits 
 init_random();
 signature* s=init_signature();
+signature_primaire=init_signature();
 pile* p=init_pile();
 
 
 
-clock_t temps_initial; /* Temps initial en micro-secondes */
-clock_t temps_final; /* Temps final en micro-secondes */
+clock_t temps_depart_test1; /* Temps initial en micro-secondes */
+clock_t temps_fin_test1; /* Temps final en micro-secondes */
 float temps_cpu; /* Temps total en secondes */
-temps_initial = clock ();
+temps_depart_test1 = clock ();
+
+//remplis_paquet_avec_3_connexe();
+remplis_paquet_avec_cycle();
+
+copier_graph_vide_dans_primaire();	
+
+litle_cup_test(s);
 
 
-remplis_paquet_avec_3_connexe();
-
-
-
-afficher_graph_du_paquet(1);
-signer(1,s , 1);
-afficher_signature(s);
-
-temps_final = clock ();
-temps_cpu = (temps_final - temps_initial) * 1e-6;
+temps_fin_test1 = clock ();
+temps_cpu = (temps_fin_test1 - temps_depart_test1) * 1e-6;
 printf(" temps construction des graphs = %Lf sec\n",(long double)temps_cpu);
 
-//printf("%Lf", (long double)(temps_final - temps_initial));
 
 return 0;
 

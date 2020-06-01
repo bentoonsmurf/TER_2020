@@ -1,0 +1,63 @@
+
+void generer_graph(int mode){
+	///mode 1 =graph sans contrainte
+	///mode 2 =graph 3complet
+	// autre fonction
+	///mode 3 =graph comprésé 
+	///mode 4 =graph comprese 3complet
+	
+
+
+	
+	
+	
+	if (mode == 1){
+		generer_cycle_simple();///un cycle pour le moment
+		
+		int nb_arc_a_ajouter;
+		int d,a;
+		/// j'ajoute des arcs j'usque a tomber sur 1 qui existe deja
+		while(nb_arc_a_ajouter < 10){
+			d=alea(N);
+			a=alea(N);
+			while(graph_vide[d][a] == 0 ){ 
+				
+				graph_vide[d][0]++;
+				graph_vide[0][d]++;
+				graph_vide[a][0]++;
+				graph_vide[0][a]++;
+				graph_vide[d][a]=graph_vide[d][0]; /// si le degre est 4 alors ce nouveau sommet
+				graph_vide[a][d]=graph_vide[a][0]; /// est forcement le 4iem sommet dans l'ordre des priorité
+				nb_arc_a_ajouter++;
+				
+				d=alea(N);
+				a=alea(N);		
+				
+			}
+			
+		}
+	}
+	
+}
+
+petite matrice
+1|1|0|0|0|
+1|1|0|0|0|
+1|1|0|0|0|
+3|0|1|2|3|
+0|3|1|1|1|
+
+
+
+little_cup_test {
+resultat atendu obtenu
+
+	depart = sommet 1
+	signature a 6 arcs 
+	(1,1,2)(2,1,1)(1,2,3)(3,1,1)(1,3,4)(4,1,1)
+
+	depart = sommet 2
+	signature a 6 arcs 
+	(1,1,2)(2,1,1)(2,2,3)(3,1,2)(2,3,4)(4,1,2)
+}
+
